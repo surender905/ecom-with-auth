@@ -35,6 +35,9 @@ app.use("/", require("./routes/root"));
 app.use("/products", require("./routes/product"));
 app.use("/brands", require("./routes/brands"));
 app.use("/categories", require("./routes/categories"));
+app.use("/users", require("./routes/user"));
+app.use("/auth", require("./routes/auth"));
+app.use("/cart", require("./routes/cart"));
 
 app.all("*", (req, res) => {
   res.status(404);

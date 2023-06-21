@@ -9,6 +9,7 @@ const corsOptions = {
     }
   },
   credentials: true,
+  exposedHeader: ["X-Total-Count"],
   optionsSuccessStatus: 200,
 };
 

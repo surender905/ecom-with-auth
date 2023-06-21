@@ -4,12 +4,12 @@ const { Schema } = mongoose;
 const userSchema = new Schema(
   {
     email: { type: String, required: true, unique: true },
-    password: { type: Buffer, required: true },
+    password: { type: String, required: true },
     role: { type: String, required: true, default: "user" },
     addresses: { type: [Schema.Types.Mixed] },
     // for addresses, we can make a separate Schema like orders. but in this case we are fine
     name: { type: String },
-    salt: Buffer,
+    // salt: Buffer,
     resetPasswordToken: { type: String, default: "" },
   },
   { timestamps: true }
@@ -27,4 +27,4 @@ userSchema.set("toJSON", {
   },
 });
 
-exports.User = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema);

@@ -4,7 +4,9 @@ const app = express();
 const path = require("path");
 const { logger, logEvents } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
+var session = require("express-session");
 
+var passport = require("passport");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const corsOptions = require("./config/corsOptions");
@@ -23,6 +25,15 @@ app.use(logger);
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false, // don't save session if unmodified
+    saveUninitialized: false, // don't create session until something stored
+    store: new SQLiteStore({ db: "sessions.db", dir: "./var/db" }),
+  })
+);
+app.use(passport.authenticate("session"));
 
 ////routes
 
@@ -38,6 +49,26 @@ app.use("/categories", require("./routes/categories"));
 app.use("/users", require("./routes/user"));
 app.use("/auth", require("./routes/auth"));
 app.use("/cart", require("./routes/cart"));
+app.use("/order", require("./routes/order"));
+
+///Passport local strategies
+
+passport.use(
+  new LocalStrategy(function (username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+      if (err) {
+        return done(err);
+      }
+      if (!user) {
+        return done(null, false);
+      }
+      if (!user.verifyPassword(password)) {
+        return done(null, false);
+      }
+      return done(null, user);
+    });
+  })
+);
 
 app.all("*", (req, res) => {
   res.status(404);
